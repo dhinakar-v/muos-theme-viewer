@@ -36,7 +36,7 @@ export default function MuxPlore() {
         position: 'relative',
       }}
     >
-      <Header title="EXPLORE CONTENT" />
+      <Header title="EXPLORE CONTENT" counter={{ current: 1, total: 8 }} />
 
       {viewMode === 'grid' ? (
         <div

@@ -33,7 +33,7 @@ export default function MuxCollect() {
         position: 'relative',
       }}
     >
-      <Header title="COLLECTION" />
+      <Header title="COLLECTION" counter={{ current: 1, total: 5 }} />
 
       {viewMode === 'grid' ? (
         <div

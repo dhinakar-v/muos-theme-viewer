@@ -35,7 +35,7 @@ export default function MuxConfig() {
         position: 'relative',
       }}
     >
-      <Header title="CONFIGURATION" />
+      <Header title="CONFIGURATION" counter={{ current: 1, total: 9 }} />
 
       <div
         style={{

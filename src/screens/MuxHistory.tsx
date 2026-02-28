@@ -34,7 +34,7 @@ export default function MuxHistory() {
         position: 'relative',
       }}
     >
-      <Header title="HISTORY" />
+      <Header title="HISTORY" counter={{ current: 1, total: 6 }} />
 
       {viewMode === 'grid' ? (
         <div

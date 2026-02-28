@@ -36,7 +36,7 @@ export default function MuxApp() {
         position: 'relative',
       }}
     >
-      <Header title="APPLICATIONS" />
+      <Header title="APPLICATIONS" counter={{ current: 1, total: 8 }} />
 
       {viewMode === 'grid' ? (
         <div
