@@ -1,44 +1,19 @@
 interface FooterProps {
+  hints?: Array<{ label: string; action: string }>;
   navA?: string;
   navB?: string;
   navX?: string;
   navY?: string;
 }
 
-interface NavButtonProps {
-  label: string;
-  text: string;
-  color?: string;
-}
+export default function Footer({ hints, navA, navB, navX, navY }: FooterProps) {
+  const items = hints ?? [
+    ...(navY ? [{ label: 'Y', action: navY }] : []),
+    ...(navX ? [{ label: 'X', action: navX }] : []),
+    ...(navB ? [{ label: 'B', action: navB }] : []),
+    ...(navA ? [{ label: 'A', action: navA }] : []),
+  ];
 
-function NavButton({ label, text, color = 'var(--mux-nav-a-glyph, #ffffff)' }: NavButtonProps) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-      <div
-        style={{
-          width: '18px',
-          height: '18px',
-          borderRadius: '50%',
-          background: color,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '10px',
-          fontWeight: 700,
-          color: '#000',
-          flexShrink: 0,
-        }}
-      >
-        {label}
-      </div>
-      <span style={{ color: 'var(--mux-nav-a-text, #ffffff)', opacity: 0.85, fontSize: '12px' }}>
-        {text}
-      </span>
-    </div>
-  );
-}
-
-export default function Footer({ navA = 'Select', navB = 'Back', navX, navY }: FooterProps) {
   return (
     <div
       style={{
@@ -51,16 +26,17 @@ export default function Footer({ navA = 'Select', navB = 'Back', navX, navY }: F
         color: 'var(--mux-footer-text, #ffffff)',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-end',
         padding: '0 16px',
-        gap: '16px',
         zIndex: 10,
+        fontSize: 12,
       }}
     >
-      {navY && <NavButton label="Y" text={navY} color="#9b59b6" />}
-      {navX && <NavButton label="X" text={navX} color="#2980b9" />}
-      <NavButton label="B" text={navB} color="var(--mux-nav-b-glyph, #e74c3c)" />
-      <NavButton label="A" text={navA} color="var(--mux-nav-a-glyph, #27ae60)" />
+      {items.map((item, i) => (
+        <span key={i} style={{ marginRight: 16 }}>
+          <span style={{ opacity: 0.8 }}>◦</span>
+          {' '}{item.action}
+        </span>
+      ))}
     </div>
   );
 }
