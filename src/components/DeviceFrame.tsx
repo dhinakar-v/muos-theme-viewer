@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { useUIState } from '../context/UIStateContext';
 import { schemeToCssVars } from '../lib/cssVariables';
 
 interface DeviceFrameProps {
@@ -12,15 +13,19 @@ const DEVICE_HEIGHT = 480;
 
 export default function DeviceFrame({ children, scale = 1 }: DeviceFrameProps) {
   const theme = useTheme();
+  const { activeAltScheme } = useUIState();
   const frameRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!frameRef.current || !theme) return;
-    const vars = schemeToCssVars(theme.scheme);
+    const merged = activeAltScheme
+      ? { ...theme.scheme, ...activeAltScheme }
+      : theme.scheme;
+    const vars = schemeToCssVars(merged);
     for (const [key, value] of Object.entries(vars)) {
       frameRef.current.style.setProperty(key, value);
     }
-  }, [theme]);
+  }, [theme, activeAltScheme]);
 
   return (
     <div

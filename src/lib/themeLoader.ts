@@ -1,13 +1,9 @@
 import JSZip from 'jszip';
 import { parseIni, mergeSchemes } from './iniParser';
 import type { SchemeValues } from './iniParser';
+import type { ThemeData, AltScheme } from '../context/ThemeContext';
 
-export interface ThemeData {
-  scheme: SchemeValues;
-  images: Map<string, string>; // normalized path → blob URL
-  resolution: string;
-  name: string;
-}
+export type { ThemeData };
 
 const TARGET_RESOLUTION = '720x480';
 const FALLBACK_RESOLUTIONS = ['720x480', '640x480', '1280x720', '720x720'];
@@ -107,13 +103,57 @@ function isImage(path: string): boolean {
 }
 
 /**
+ * Determine if a file is an audio file.
+ */
+function isAudio(path: string): boolean {
+  return /\.(wav|ogg|mp3)$/i.test(path);
+}
+
+/**
+ * Parse a .muxalt nested ZIP blob and extract its scheme.
+ */
+async function parseAltScheme(
+  altBlob: Blob,
+  name: string,
+  resolution: string
+): Promise<AltScheme | null> {
+  try {
+    const altZip = await JSZip.loadAsync(altBlob);
+    const iniFiles = new Map<string, string>();
+    const promises: Promise<void>[] = [];
+
+    altZip.forEach((relativePath, zipEntry) => {
+      if (zipEntry.dir) return;
+      const p = normPath(relativePath);
+      if (p.endsWith('.ini')) {
+        promises.push(
+          zipEntry.async('string').then((content) => {
+            iniFiles.set(p, content);
+          })
+        );
+      }
+    });
+
+    await Promise.all(promises);
+    if (iniFiles.size === 0) return null;
+
+    const scheme = buildScheme(iniFiles, resolution);
+    return { name, scheme };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Load theme from a .muxthm ZIP file.
  */
-export async function loadFromZip(file: File): Promise<ThemeData & { screenSchemes: Map<string, SchemeValues> }> {
+export async function loadFromZip(file: File): Promise<ThemeData> {
   const zip = await JSZip.loadAsync(file);
 
   const iniFiles = new Map<string, string>();
   const imageFiles = new Map<string, Blob>();
+  const audioFiles = new Map<string, Blob>();
+  const altEntries: { path: string; blob: Blob }[] = [];
 
   const promises: Promise<void>[] = [];
 
@@ -133,6 +173,18 @@ export async function loadFromZip(file: File): Promise<ThemeData & { screenSchem
           imageFiles.set(p, blob);
         })
       );
+    } else if (isAudio(p)) {
+      promises.push(
+        zipEntry.async('blob').then((blob) => {
+          audioFiles.set(p, blob);
+        })
+      );
+    } else if (p.includes('alternate/') && p.endsWith('.muxalt')) {
+      promises.push(
+        zipEntry.async('blob').then((blob) => {
+          altEntries.push({ path: p, blob });
+        })
+      );
     }
   });
 
@@ -149,16 +201,31 @@ export async function loadFromZip(file: File): Promise<ThemeData & { screenSchem
     images.set(path, URL.createObjectURL(blob));
   }
 
+  const audio = new Map<string, string>();
+  for (const [path, blob] of audioFiles.entries()) {
+    const filename = path.split('/').pop() ?? path;
+    audio.set(filename, URL.createObjectURL(blob));
+  }
+
+  const altSchemes: AltScheme[] = [];
+  for (const { path, blob } of altEntries) {
+    const altName = path.split('/').pop()!.replace(/\.muxalt$/i, '');
+    const parsed = await parseAltScheme(blob, altName, resolution);
+    if (parsed) altSchemes.push(parsed);
+  }
+
   const name = file.name.replace(/\.muxthm$/i, '');
-  return { scheme, images, resolution, name, screenSchemes };
+  return { scheme, images, resolution, name, screenSchemes, audio, altSchemes };
 }
 
 /**
  * Load theme from a folder via <input webkitdirectory>.
  */
-export async function loadFromFolder(files: FileList): Promise<ThemeData & { screenSchemes: Map<string, SchemeValues> }> {
+export async function loadFromFolder(files: FileList): Promise<ThemeData> {
   const iniFiles = new Map<string, string>();
   const imageFiles = new Map<string, Blob>();
+  const audioFiles = new Map<string, Blob>();
+  const altFiles: { path: string; file: File }[] = [];
 
   const promises: Promise<void>[] = [];
 
@@ -182,6 +249,10 @@ export async function loadFromFolder(files: FileList): Promise<ThemeData & { scr
       );
     } else if (isImage(p)) {
       imageFiles.set(p, f);
+    } else if (isAudio(p)) {
+      audioFiles.set(p, f);
+    } else if (p.includes('alternate/') && p.endsWith('.muxalt')) {
+      altFiles.push({ path: p, file: f });
     }
   }
 
@@ -198,8 +269,22 @@ export async function loadFromFolder(files: FileList): Promise<ThemeData & { scr
     images.set(path, URL.createObjectURL(blob));
   }
 
+  const audio = new Map<string, string>();
+  for (const [path, blob] of audioFiles.entries()) {
+    const filename = path.split('/').pop() ?? path;
+    audio.set(filename, URL.createObjectURL(blob));
+  }
+
+  const altSchemes: AltScheme[] = [];
+  for (const { path, file: altFile } of altFiles) {
+    const altName = path.split('/').pop()!.replace(/\.muxalt$/i, '');
+    const blob = new Blob([await altFile.arrayBuffer()]);
+    const parsed = await parseAltScheme(blob, altName, resolution);
+    if (parsed) altSchemes.push(parsed);
+  }
+
   const name = prefix || 'theme';
-  return { scheme, images, resolution, name, screenSchemes };
+  return { scheme, images, resolution, name, screenSchemes, audio, altSchemes };
 }
 
 /**

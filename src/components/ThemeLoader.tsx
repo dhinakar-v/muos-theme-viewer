@@ -64,15 +64,15 @@ export default function ThemeLoader({ onLoad }: ThemeLoaderProps) {
         onDragLeave={() => setDragging(false)}
         onClick={() => fileRef.current?.click()}
         style={{
-          border: `2px dashed ${dragging ? '#6c63ff' : 'rgba(255,255,255,0.15)'}`,
+          border: `2px dashed ${dragging ? '#6c63ff' : 'rgba(0,0,0,0.18)'}`,
           borderRadius: '8px',
           padding: '20px 12px',
           textAlign: 'center',
           cursor: 'pointer',
-          background: dragging ? 'rgba(108,99,255,0.1)' : 'rgba(255,255,255,0.03)',
+          background: dragging ? 'rgba(108,99,255,0.08)' : 'rgba(0,0,0,0.03)',
           transition: 'all 0.15s ease',
           fontSize: '12px',
-          color: 'rgba(255,255,255,0.6)',
+          color: 'rgba(0,0,0,0.55)',
           lineHeight: 1.6,
         }}
       >
@@ -91,9 +91,9 @@ export default function ThemeLoader({ onLoad }: ThemeLoaderProps) {
 
       {/* Divider */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', opacity: 0.4 }}>
-        <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.2)' }} />
+        <div style={{ flex: 1, height: '1px', background: 'rgba(0,0,0,0.2)' }} />
         <span style={{ fontSize: '11px' }}>or</span>
-        <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.2)' }} />
+        <div style={{ flex: 1, height: '1px', background: 'rgba(0,0,0,0.2)' }} />
       </div>
 
       {/* Folder button */}
@@ -102,16 +102,16 @@ export default function ThemeLoader({ onLoad }: ThemeLoaderProps) {
         style={{
           width: '100%',
           padding: '8px',
-          background: 'rgba(255,255,255,0.07)',
-          border: '1px solid rgba(255,255,255,0.12)',
+          background: 'rgba(0,0,0,0.06)',
+          border: '1px solid rgba(0,0,0,0.12)',
           borderRadius: '6px',
-          color: 'rgba(255,255,255,0.8)',
+          color: 'rgba(0,0,0,0.75)',
           cursor: 'pointer',
           fontSize: '12px',
           transition: 'background 0.15s ease',
         }}
-        onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')}
-        onMouseOut={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.07)')}
+        onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.10)')}
+        onMouseOut={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.06)')}
       >
         📁 Load Folder
       </button>
@@ -131,7 +131,7 @@ export default function ThemeLoader({ onLoad }: ThemeLoaderProps) {
         <div style={{
           textAlign: 'center',
           fontSize: '12px',
-          color: 'rgba(255,255,255,0.5)',
+          color: 'rgba(0,0,0,0.5)',
           padding: '8px',
           display: 'flex',
           alignItems: 'center',
@@ -146,12 +146,12 @@ export default function ThemeLoader({ onLoad }: ThemeLoaderProps) {
       {/* Error */}
       {error && (
         <div style={{
-          background: 'rgba(220,38,38,0.15)',
+          background: 'rgba(220,38,38,0.1)',
           border: '1px solid rgba(220,38,38,0.3)',
           borderRadius: '6px',
           padding: '8px 10px',
           fontSize: '12px',
-          color: '#fca5a5',
+          color: '#dc2626',
         }}>
           {error}
         </div>

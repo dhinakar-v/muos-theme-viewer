@@ -1,22 +1,24 @@
 import { useTheme } from '../context/ThemeContext';
+import { useUIState } from '../context/UIStateContext';
 import { findImage } from '../lib/themeLoader';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ListItem from '../components/ListItem';
 
 const SAMPLE_APPS = [
-  { id: 'retroarch', label: 'RetroArch' },
-  { id: 'gmenu2x', label: 'GMenu2X' },
-  { id: 'moonlight', label: 'Moonlight' },
-  { id: 'drastic', label: 'DraStic' },
-  { id: 'ppsspp', label: 'PPSSPP' },
-  { id: 'scummvm', label: 'ScummVM' },
-  { id: 'gptokeyb', label: 'GpToKeyb' },
-  { id: 'portmaster', label: 'PortMaster' },
+  { id: 'retroarch', label: 'RetroArch', emoji: '🕹' },
+  { id: 'gmenu2x', label: 'GMenu2X', emoji: '📋' },
+  { id: 'moonlight', label: 'Moonlight', emoji: '🌙' },
+  { id: 'drastic', label: 'DraStic', emoji: '📱' },
+  { id: 'ppsspp', label: 'PPSSPP', emoji: '🎮' },
+  { id: 'scummvm', label: 'ScummVM', emoji: '🖥' },
+  { id: 'gptokeyb', label: 'GpToKeyb', emoji: '⌨' },
+  { id: 'portmaster', label: 'PortMaster', emoji: '⚓' },
 ];
 
 export default function MuxApp() {
   const theme = useTheme();
+  const { viewMode } = useUIState();
   const images = theme?.images ?? new Map();
   const resolution = theme?.resolution ?? '720x480';
 
@@ -36,32 +38,86 @@ export default function MuxApp() {
     >
       <Header title="Applications" />
 
-      <div
-        style={{
-          position: 'absolute',
-          top: 'var(--mux-header-height, 48px)',
-          bottom: 'var(--mux-footer-height, 48px)',
-          left: 0,
-          right: 0,
-          overflowY: 'auto',
-          padding: '4px 0',
-        }}
-      >
-        {SAMPLE_APPS.map((app, idx) => {
-          const glyphUrl = findImage(
-            images, resolution,
-            `glyph/muxapp/${app.id}.png`,
-          );
-          return (
-            <ListItem
-              key={app.id}
-              text={app.label}
-              focused={idx === 0}
-              glyphSrc={glyphUrl}
-            />
-          );
-        })}
-      </div>
+      {viewMode === 'grid' ? (
+        <div
+          style={{
+            position: 'absolute',
+            top: 'var(--mux-header-height, 48px)',
+            bottom: 'var(--mux-footer-height, 48px)',
+            left: 0,
+            right: 0,
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '10px',
+            padding: '14px',
+            overflowY: 'auto',
+          }}
+        >
+          {SAMPLE_APPS.map((app, idx) => {
+            const glyphUrl = findImage(images, resolution, `glyph/muxapp/${app.id}.png`);
+            return (
+              <div
+                key={app.id}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  borderRadius: '8px',
+                  background: idx === 0
+                    ? 'var(--mux-list-focus-bg, rgba(108,99,255,0.35))'
+                    : 'rgba(255,255,255,0.06)',
+                  padding: '10px 6px',
+                  aspectRatio: '1',
+                }}
+              >
+                {glyphUrl ? (
+                  <img src={glyphUrl} alt="" style={{ width: '44px', height: '44px', objectFit: 'contain' }} />
+                ) : (
+                  <div style={{ fontSize: '28px' }}>{app.emoji}</div>
+                )}
+                <span style={{
+                  fontSize: '10px',
+                  color: 'var(--mux-list-text, #fff)',
+                  textAlign: 'center',
+                  lineHeight: 1.2,
+                  opacity: idx === 0 ? 1 : 0.8,
+                }}>
+                  {app.label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div
+          style={{
+            position: 'absolute',
+            top: 'var(--mux-header-height, 48px)',
+            bottom: 'var(--mux-footer-height, 48px)',
+            left: 0,
+            right: 0,
+            overflowY: 'auto',
+            padding: '4px 0',
+          }}
+        >
+          {SAMPLE_APPS.map((app, idx) => {
+            const glyphUrl = findImage(
+              images, resolution,
+              `glyph/muxapp/${app.id}.png`,
+            );
+            return (
+              <ListItem
+                key={app.id}
+                text={app.label}
+                focused={idx === 0}
+                glyphSrc={glyphUrl}
+              />
+            );
+          })}
+        </div>
+      )}
 
       <Footer navA="Launch" navB="Back" />
     </div>

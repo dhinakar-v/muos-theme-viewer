@@ -14,7 +14,7 @@ function ColorSwatch({ hex }: { hex: string }) {
         height: '14px',
         borderRadius: '3px',
         background: `#${hex}`,
-        border: '1px solid rgba(255,255,255,0.15)',
+        border: '1px solid rgba(0,0,0,0.15)',
         flexShrink: 0,
         cursor: 'help',
       }}
@@ -37,10 +37,10 @@ function Section({ name, values }: SectionProps) {
         onClick={() => setOpen((o) => !o)}
         style={{
           width: '100%',
-          background: 'rgba(255,255,255,0.05)',
+          background: 'rgba(0,0,0,0.05)',
           border: 'none',
           borderRadius: '4px',
-          color: 'rgba(255,255,255,0.9)',
+          color: '#1a1a1a',
           padding: '5px 8px',
           cursor: 'pointer',
           display: 'flex',
@@ -51,8 +51,8 @@ function Section({ name, values }: SectionProps) {
           letterSpacing: '0.06em',
           fontWeight: 600,
         }}
-        onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.09)')}
-        onMouseOut={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+        onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.09)')}
+        onMouseOut={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.05)')}
       >
         <span>{name}</span>
         <span style={{ opacity: 0.5 }}>{open ? '▾' : '▸'} {entries.length}</span>
@@ -77,7 +77,7 @@ function Section({ name, values }: SectionProps) {
                 padding: '2px 6px',
                 fontSize: '11px',
                 borderRadius: '3px',
-                background: 'rgba(255,255,255,0.02)',
+                background: 'rgba(0,0,0,0.02)',
               }}
             >
               {isHexColor(value) && <ColorSwatch hex={value} />}
@@ -100,7 +100,7 @@ export default function SchemeInspector() {
 
   if (!theme) {
     return (
-      <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px', textAlign: 'center', padding: '24px 0' }}>
+      <div style={{ color: 'rgba(0,0,0,0.35)', fontSize: '12px', textAlign: 'center', padding: '24px 0' }}>
         Load a theme to inspect its scheme values
       </div>
     );

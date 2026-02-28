@@ -1,12 +1,19 @@
 import { createContext, useContext } from 'react';
 import type { SchemeValues } from '../lib/iniParser';
 
+export interface AltScheme {
+  name: string;
+  scheme: SchemeValues;
+}
+
 export interface ThemeData {
   scheme: SchemeValues;           // merged global scheme
   screenSchemes: Map<string, SchemeValues>; // per-screen schemes
   images: Map<string, string>;    // normalized path → blob URL
   resolution: string;             // e.g. "720x480"
   name: string;                   // theme display name
+  audio: Map<string, string>;     // filename → blob URL
+  altSchemes: AltScheme[];        // parsed .muxalt files
 }
 
 export const ThemeContext = createContext<ThemeData | null>(null);
