@@ -59,7 +59,7 @@ export default function MuxConfig() {
               text={item.label}
               focused={idx === 0}
               glyphSrc={glyphUrl}
-              fallbackText={item.emoji}
+              fallbackText="○"
             />
           );
         })}

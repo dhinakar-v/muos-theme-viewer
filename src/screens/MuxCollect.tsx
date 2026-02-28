@@ -73,7 +73,7 @@ export default function MuxCollect() {
                 {glyphUrl ? (
                   <img src={glyphUrl} alt="" style={{ width: '44px', height: '44px', objectFit: 'contain' }} />
                 ) : (
-                  <div style={{ fontSize: '28px' }}>{col.emoji}</div>
+                  <div style={{ fontSize: '28px', opacity: 0.7 }}>○</div>
                 )}
                 <span style={{
                   fontSize: '10px',
