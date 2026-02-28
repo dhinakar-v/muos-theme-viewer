@@ -47,7 +47,7 @@ export default function MuxApp() {
             left: 0,
             right: 0,
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
+            gridTemplateColumns: 'repeat(var(--mux-grid-column-count, 3), 1fr)',
             gap: '10px',
             padding: '14px',
             overflowY: 'auto',
