@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { ThemeContext } from './context/ThemeContext';
 import type { ThemeData } from './context/ThemeContext';
 import { UIStateProvider, useUIState } from './context/UIStateContext';
@@ -27,21 +27,6 @@ const DEVICE_HEIGHT = 480;
 
 const GRID_SCREENS: ScreenId[] = ['muxlaunch', 'muxplore', 'muxcollect', 'muxapp', 'muxhistory'];
 
-function getScreenComponent(id: ScreenId) {
-  switch (id) {
-    case 'boot':       return <BootLogo />;
-    case 'muxstart':   return <MuxStart />;
-    case 'muxlaunch':  return <MuxLaunch />;
-    case 'muxcharge':  return <MuxCharge />;
-    case 'muxplore':   return <MuxPlore />;
-    case 'muxcollect': return <MuxCollect />;
-    case 'muxapp':     return <MuxApp />;
-    case 'muxhistory': return <MuxHistory />;
-    case 'muxinfo':    return <MuxInfo />;
-    case 'muxconfig':  return <MuxConfig />;
-  }
-}
-
 type LeftTab = 'theme' | 'audio' | 'schemes';
 
 function AppInner({
@@ -54,6 +39,7 @@ function AppInner({
   const [activeScreen, setActiveScreen] = useState<ScreenId>('muxlaunch');
   const [scale, setScale] = useState(1);
   const [activeTab, setActiveTab] = useState<LeftTab>('theme');
+  const [launchFocus, setLaunchFocus] = useState(0);
   const centerRef = useRef<HTMLDivElement>(null);
   const { viewMode, setViewMode } = useUIState();
 
@@ -75,6 +61,28 @@ function AppInner({
     if (centerRef.current) ro.observe(centerRef.current);
     return () => ro.disconnect();
   }, []);
+
+  // Auto-cycle launch screen focus to demo accent colors
+  useEffect(() => {
+    if (activeScreen !== 'muxlaunch') return;
+    const id = setInterval(() => setLaunchFocus(f => (f + 1) % 8), 1500);
+    return () => clearInterval(id);
+  }, [activeScreen]);
+
+  const getScreenComponent = useCallback((id: ScreenId) => {
+    switch (id) {
+      case 'boot':       return <BootLogo />;
+      case 'muxstart':   return <MuxStart />;
+      case 'muxlaunch':  return <MuxLaunch focusedIdx={launchFocus} />;
+      case 'muxcharge':  return <MuxCharge />;
+      case 'muxplore':   return <MuxPlore />;
+      case 'muxcollect': return <MuxCollect />;
+      case 'muxapp':     return <MuxApp />;
+      case 'muxhistory': return <MuxHistory />;
+      case 'muxinfo':    return <MuxInfo />;
+      case 'muxconfig':  return <MuxConfig />;
+    }
+  }, [launchFocus]);
 
   const tabStyle = (tab: LeftTab) => ({
     flex: 1,
@@ -172,6 +180,7 @@ function AppInner({
           <DeviceFrame scale={scale}>
             {getScreenComponent(activeScreen)}
           </DeviceFrame>
+
         </div>
 
         {/* Screen navigation — bottom center */}
