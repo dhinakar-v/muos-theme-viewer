@@ -36,7 +36,7 @@ export default function MuxApp() {
         position: 'relative',
       }}
     >
-      <Header title="Applications" />
+      <Header title="APPLICATIONS" />
 
       {viewMode === 'grid' ? (
         <div

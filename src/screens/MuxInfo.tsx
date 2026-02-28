@@ -23,7 +23,7 @@ export default function MuxInfo() {
         position: 'relative',
       }}
     >
-      <Header title="Information" />
+      <Header title="INFORMATION" />
 
       <div
         style={{

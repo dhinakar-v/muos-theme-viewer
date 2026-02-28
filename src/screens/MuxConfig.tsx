@@ -35,7 +35,7 @@ export default function MuxConfig() {
         position: 'relative',
       }}
     >
-      <Header title="Configuration" />
+      <Header title="CONFIGURATION" />
 
       <div
         style={{

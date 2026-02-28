@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 
 interface HeaderProps {
   title?: string;
+  counter?: { current: number; total: number };
 }
 
 function formatTime(d: Date): string {
   return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
-export default function Header({ title = 'muOS' }: HeaderProps) {
+export default function Header({ title, counter }: HeaderProps) {
   const [time, setTime] = useState(() => formatTime(new Date()));
 
   useEffect(() => {
@@ -28,46 +29,60 @@ export default function Header({ title = 'muOS' }: HeaderProps) {
         color: 'var(--mux-header-text, #ffffff)',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
         padding: '0 16px',
         zIndex: 10,
         fontSize: '13px',
       }}
     >
-      <span style={{ fontWeight: 600, letterSpacing: '0.03em' }}>{title}</span>
+      {/* Left: Clock */}
+      <span style={{ color: 'var(--mux-datetime-text, #fff)', fontWeight: 500, minWidth: 48 }}>
+        {time}
+      </span>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', opacity: 0.9 }}>
-        {/* Bluetooth indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29zM13 5.83l1.88 1.88L13 9.59V5.83zm1.88 10.46L13 18.17v-3.76l1.88 1.88z"/>
-          </svg>
-          <span style={{ fontSize: '11px' }}>On</span>
-        </div>
+      {/* Center: Screen title */}
+      <span
+        style={{
+          flex: 1,
+          textAlign: 'center',
+          fontSize: 11,
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+          opacity: 0.55,
+          fontWeight: 600,
+        }}
+      >
+        {title ?? ''}
+      </span>
 
-        {/* WiFi indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
-          </svg>
-          <span style={{ fontSize: '11px' }}>Connected</span>
-        </div>
+      {/* Right: Counter + WiFi + Battery */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {counter && (
+          <span style={{ fontSize: 11, opacity: 0.7, marginRight: 4 }}>
+            {counter.current} | {counter.total}
+          </span>
+        )}
 
-        {/* Battery indicator with charging icon and % */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-          <span style={{ fontSize: '11px' }}>⚡</span>
-          <svg width="18" height="10" viewBox="0 0 24 12" fill="currentColor">
-            <rect x="0" y="1" width="20" height="10" rx="2" ry="2" fill="none" stroke="currentColor" strokeWidth="1.5"/>
-            <rect x="1.5" y="2.5" width="14" height="7" rx="1" fill="currentColor" opacity="0.9"/>
-            <rect x="20" y="4" width="4" height="4" rx="1" fill="currentColor" opacity="0.6"/>
-          </svg>
-          <span style={{ fontSize: '11px' }}>87%</span>
-        </div>
+        {/* WiFi icon */}
+        <svg width="18" height="14" viewBox="0 0 24 18" fill="currentColor" opacity={0.85}>
+          <path d="M12 4C7.6 4 3.6 5.7 0.6 8.4L3 10.9C5.4 8.7 8.6 7.4 12 7.4s6.6 1.3 9 3.5l2.4-2.5C20.4 5.7 16.4 4 12 4z" />
+          <path d="M12 8.8c-2.7 0-5.2 1-7.1 2.7l2.4 2.4c1.3-1.1 3-1.8 4.7-1.8s3.4.7 4.7 1.8l2.4-2.4C17.2 9.8 14.7 8.8 12 8.8z" />
+          <circle cx="12" cy="17" r="2" />
+        </svg>
 
-        {/* Time */}
-        <span style={{ color: 'var(--mux-datetime-text, #ffffff)', minWidth: '40px', textAlign: 'right' }}>
-          {time}
-        </span>
+        {/* Battery icon */}
+        <svg width="20" height="12" viewBox="0 0 28 14" fill="none" opacity={0.85}>
+          <rect x="1" y="1" width="22" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
+          <rect x="23" y="4" width="4" height="6" rx="1" fill="currentColor" opacity={0.6} />
+          <rect
+            x="2.5"
+            y="2.5"
+            width="16"
+            height="9"
+            rx="1.5"
+            fill="var(--mux-battery-normal, currentColor)"
+            opacity={0.9}
+          />
+        </svg>
       </div>
     </div>
   );

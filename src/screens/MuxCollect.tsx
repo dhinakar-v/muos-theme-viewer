@@ -33,7 +33,7 @@ export default function MuxCollect() {
         position: 'relative',
       }}
     >
-      <Header title="Collections" />
+      <Header title="COLLECTION" />
 
       {viewMode === 'grid' ? (
         <div

@@ -63,7 +63,7 @@ export default function MuxLaunch() {
         />
       )}
 
-      <Header title="muOS" />
+      <Header />
 
       {viewMode === 'grid' ? (
         <div
