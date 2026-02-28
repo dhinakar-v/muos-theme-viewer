@@ -1,0 +1,70 @@
+import { useTheme } from '../context/ThemeContext';
+import { findImage } from '../lib/themeLoader';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import ListItem from '../components/ListItem';
+
+const CONFIG_ITEMS = [
+  { id: 'general', label: 'General Settings' },
+  { id: 'theme', label: 'Theme' },
+  { id: 'language', label: 'Language' },
+  { id: 'network', label: 'Network' },
+  { id: 'bluetooth', label: 'Bluetooth' },
+  { id: 'storage', label: 'Storage' },
+  { id: 'audio', label: 'Audio' },
+  { id: 'power', label: 'Power' },
+  { id: 'advanced', label: 'Advanced' },
+];
+
+export default function MuxConfig() {
+  const theme = useTheme();
+  const images = theme?.images ?? new Map();
+  const resolution = theme?.resolution ?? '720x480';
+
+  const wallUrl = findImage(images, resolution, 'image/wall/muxconfig.png', 'wall/muxconfig.png');
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        background: 'var(--mux-bg, #121212)',
+        backgroundImage: wallUrl ? `url(${wallUrl})` : undefined,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        position: 'relative',
+      }}
+    >
+      <Header title="Configuration" />
+
+      <div
+        style={{
+          position: 'absolute',
+          top: 'var(--mux-header-height, 48px)',
+          bottom: 'var(--mux-footer-height, 48px)',
+          left: 0,
+          right: 0,
+          overflowY: 'auto',
+          padding: '4px 0',
+        }}
+      >
+        {CONFIG_ITEMS.map((item, idx) => {
+          const glyphUrl = findImage(
+            images, resolution,
+            `glyph/muxconfig/${item.id}.png`,
+          );
+          return (
+            <ListItem
+              key={item.id}
+              text={item.label}
+              focused={idx === 0}
+              glyphSrc={glyphUrl}
+            />
+          );
+        })}
+      </div>
+
+      <Footer navA="Select" navB="Back" />
+    </div>
+  );
+}
