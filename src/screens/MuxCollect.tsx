@@ -99,19 +99,45 @@ export default function MuxCollect() {
             bottom: 'var(--mux-footer-height, 48px)',
             left: 0,
             right: 0,
-            overflowY: 'auto',
-            padding: '4px 0',
+            display: 'flex',
+            overflow: 'hidden',
           }}
         >
-          {SAMPLE_COLLECTIONS.map((col, idx) => (
-            <ListItem
-              key={col.name}
-              text={col.name}
-              focused={idx === 0}
-              fallbackText={col.emoji}
-              value={`${col.count}`}
-            />
-          ))}
+          {/* Left: List items */}
+          <div style={{ flex: '0 0 55%', overflowY: 'auto', padding: '4px 0' }}>
+            {SAMPLE_COLLECTIONS.map((col, idx) => (
+              <ListItem
+                key={col.name}
+                text={col.name}
+                focused={idx === 0}
+                fallbackText="○"
+                value={`${col.count}`}
+              />
+            ))}
+          </div>
+
+          {/* Right: Boxart for focused item */}
+          {(() => {
+            const focusedCol = SAMPLE_COLLECTIONS[0];
+            const boxartSrc = findImage(
+              images, resolution,
+              `catalogue/${focusedCol.name}/box.png`,
+              `catalogue/${focusedCol.name}/preview.png`,
+            );
+            return boxartSrc ? (
+              <div style={{
+                flex: 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: 12,
+              }}>
+                <img
+                  src={boxartSrc}
+                  alt=""
+                  style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: 4 }}
+                />
+              </div>
+            ) : null;
+          })()}
         </div>
       )}
 

@@ -108,25 +108,51 @@ export default function MuxPlore() {
             bottom: 'var(--mux-footer-height, 48px)',
             left: 0,
             right: 0,
-            overflowY: 'auto',
-            padding: '4px 0',
+            display: 'flex',
+            overflow: 'hidden',
           }}
         >
-          {SAMPLE_FILES.map((file, idx) => {
-            const glyphUrl = findImage(
+          {/* Left: List items */}
+          <div style={{ flex: '0 0 55%', overflowY: 'auto', padding: '4px 0' }}>
+            {SAMPLE_FILES.map((file, idx) => {
+              const glyphUrl = findImage(
+                images, resolution,
+                `glyph/muxplore/${file.type}.png`,
+                `glyph/muxplore/folder.png`
+              );
+              return (
+                <ListItem
+                  key={file.name}
+                  text={file.name}
+                  focused={idx === 0}
+                  glyphSrc={glyphUrl}
+                />
+              );
+            })}
+          </div>
+
+          {/* Right: Boxart for focused item */}
+          {(() => {
+            const focusedFile = SAMPLE_FILES[0];
+            const boxartSrc = findImage(
               images, resolution,
-              `glyph/muxplore/${file.type}.png`,
-              `glyph/muxplore/folder.png`
+              `catalogue/${focusedFile.name}/box.png`,
+              `catalogue/${focusedFile.name}/preview.png`,
             );
-            return (
-              <ListItem
-                key={file.name}
-                text={file.name}
-                focused={idx === 0}
-                glyphSrc={glyphUrl}
-              />
-            );
-          })}
+            return boxartSrc ? (
+              <div style={{
+                flex: 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: 12,
+              }}>
+                <img
+                  src={boxartSrc}
+                  alt=""
+                  style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: 4 }}
+                />
+              </div>
+            ) : null;
+          })()}
         </div>
       )}
 
