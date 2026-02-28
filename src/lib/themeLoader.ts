@@ -5,6 +5,11 @@ import type { ThemeData, AltScheme } from '../context/ThemeContext';
 
 export type { ThemeData };
 
+export interface FolderEntry {
+  relativePath: string;
+  bytes: Uint8Array;
+}
+
 const TARGET_RESOLUTION = '720x480';
 const FALLBACK_RESOLUTIONS = ['720x480', '640x480', '1280x720', '720x720'];
 
@@ -145,11 +150,9 @@ async function parseAltScheme(
 }
 
 /**
- * Load theme from a .muxthm ZIP file.
+ * Core logic shared by loadFromZip and loadFromZipBytes.
  */
-export async function loadFromZip(file: File): Promise<ThemeData> {
-  const zip = await JSZip.loadAsync(file);
-
+async function buildThemeFromZip(zip: JSZip, name: string): Promise<ThemeData> {
   const iniFiles = new Map<string, string>();
   const imageFiles = new Map<string, Blob>();
   const audioFiles = new Map<string, Blob>();
@@ -214,45 +217,46 @@ export async function loadFromZip(file: File): Promise<ThemeData> {
     if (parsed) altSchemes.push(parsed);
   }
 
-  const name = file.name.replace(/\.muxthm$/i, '');
   return { scheme, images, resolution, name, screenSchemes, audio, altSchemes };
 }
 
 /**
- * Load theme from a folder via <input webkitdirectory>.
+ * Core logic shared by loadFromFolder and loadFromFolderEntries.
+ * Each entry provides a relativePath (stripped of top-level folder prefix) and bytes.
  */
-export async function loadFromFolder(files: FileList): Promise<ThemeData> {
+async function buildThemeFromEntries(
+  entries: FolderEntry[],
+  name: string
+): Promise<ThemeData> {
   const iniFiles = new Map<string, string>();
   const imageFiles = new Map<string, Blob>();
   const audioFiles = new Map<string, Blob>();
-  const altFiles: { path: string; file: File }[] = [];
+  const altEntries: { path: string; blob: Blob }[] = [];
 
   const promises: Promise<void>[] = [];
 
-  // The FileList from webkitdirectory includes the folder name as prefix.
-  // We strip it to get a consistent path.
-  const allWebkitPaths = Array.from(files).map((f) => (f as File & { webkitRelativePath: string }).webkitRelativePath);
-  const prefix = allWebkitPaths[0]?.split('/')[0] ?? '';
+  for (const entry of entries) {
+    const p = normPath(entry.relativePath);
 
-  for (const file of Array.from(files)) {
-    const f = file as File & { webkitRelativePath: string };
-    const rawPath = f.webkitRelativePath;
-    const p = rawPath.startsWith(prefix + '/')
-      ? rawPath.slice(prefix.length + 1)
-      : rawPath;
+    // entry.bytes may be Uint8Array<ArrayBufferLike> from Tauri; slice to a
+    // plain ArrayBuffer so Blob() is happy with the TS strict types.
+    const buf = entry.bytes.buffer.slice(
+      entry.bytes.byteOffset,
+      entry.bytes.byteOffset + entry.bytes.byteLength
+    ) as ArrayBuffer;
 
     if (p.endsWith('.ini')) {
       promises.push(
-        f.text().then((content) => {
+        new Blob([buf]).text().then((content) => {
           iniFiles.set(p, content);
         })
       );
     } else if (isImage(p)) {
-      imageFiles.set(p, f);
+      imageFiles.set(p, new Blob([buf]));
     } else if (isAudio(p)) {
-      audioFiles.set(p, f);
+      audioFiles.set(p, new Blob([buf]));
     } else if (p.includes('alternate/') && p.endsWith('.muxalt')) {
-      altFiles.push({ path: p, file: f });
+      altEntries.push({ path: p, blob: new Blob([buf]) });
     }
   }
 
@@ -276,15 +280,67 @@ export async function loadFromFolder(files: FileList): Promise<ThemeData> {
   }
 
   const altSchemes: AltScheme[] = [];
-  for (const { path, file: altFile } of altFiles) {
+  for (const { path, blob } of altEntries) {
     const altName = path.split('/').pop()!.replace(/\.muxalt$/i, '');
-    const blob = new Blob([await altFile.arrayBuffer()]);
     const parsed = await parseAltScheme(blob, altName, resolution);
     if (parsed) altSchemes.push(parsed);
   }
 
-  const name = prefix || 'theme';
   return { scheme, images, resolution, name, screenSchemes, audio, altSchemes };
+}
+
+/**
+ * Load theme from a .muxthm ZIP file (browser File API).
+ */
+export async function loadFromZip(file: File): Promise<ThemeData> {
+  const zip = await JSZip.loadAsync(file);
+  const name = file.name.replace(/\.muxthm$/i, '');
+  return buildThemeFromZip(zip, name);
+}
+
+/**
+ * Load theme from raw ZIP bytes (Tauri native file read).
+ */
+export async function loadFromZipBytes(
+  bytes: Uint8Array,
+  name: string
+): Promise<ThemeData> {
+  const zip = await JSZip.loadAsync(bytes);
+  return buildThemeFromZip(zip, name);
+}
+
+/**
+ * Load theme from a folder via <input webkitdirectory> (browser File API).
+ */
+export async function loadFromFolder(files: FileList): Promise<ThemeData> {
+  const allWebkitPaths = Array.from(files).map(
+    (f) => (f as File & { webkitRelativePath: string }).webkitRelativePath
+  );
+  const prefix = allWebkitPaths[0]?.split('/')[0] ?? '';
+
+  const entries: FolderEntry[] = await Promise.all(
+    Array.from(files).map(async (file) => {
+      const f = file as File & { webkitRelativePath: string };
+      const rawPath = f.webkitRelativePath;
+      const relativePath = rawPath.startsWith(prefix + '/')
+        ? rawPath.slice(prefix.length + 1)
+        : rawPath;
+      const bytes = new Uint8Array(await f.arrayBuffer());
+      return { relativePath, bytes };
+    })
+  );
+
+  return buildThemeFromEntries(entries, prefix || 'theme');
+}
+
+/**
+ * Load theme from folder entries provided by Tauri native file read.
+ */
+export async function loadFromFolderEntries(
+  entries: FolderEntry[],
+  name: string
+): Promise<ThemeData> {
+  return buildThemeFromEntries(entries, name);
 }
 
 /**
