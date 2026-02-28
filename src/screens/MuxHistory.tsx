@@ -49,6 +49,7 @@ export default function MuxHistory() {
             gap: '10px',
             padding: '14px',
             overflowY: 'auto',
+            overflowX: 'hidden',
           }}
         >
           {SAMPLE_HISTORY.map((game, idx) => {
@@ -64,8 +65,8 @@ export default function MuxHistory() {
                   gap: '6px',
                   borderRadius: '8px',
                   background: idx === 0
-                    ? 'var(--mux-list-focus-bg, rgba(108,99,255,0.35))'
-                    : 'rgba(255,255,255,0.06)',
+                    ? 'var(--mux-cell-focus-bg, rgba(108,99,255,0.35))'
+                    : 'var(--mux-cell-default-bg, rgba(255,255,255,0.06))',
                   padding: '10px 6px',
                   aspectRatio: '1',
                 }}

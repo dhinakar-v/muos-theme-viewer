@@ -2,11 +2,12 @@ interface ListItemProps {
   text: string;
   focused?: boolean;
   glyphSrc?: string;
+  fallbackText?: string;
   value?: string;
   style?: React.CSSProperties;
 }
 
-export default function ListItem({ text, focused = false, glyphSrc, value, style }: ListItemProps) {
+export default function ListItem({ text, focused = false, glyphSrc, fallbackText, value, style }: ListItemProps) {
   return (
     <div
       style={{
@@ -22,13 +23,17 @@ export default function ListItem({ text, focused = false, glyphSrc, value, style
         ...style,
       }}
     >
-      {glyphSrc && (
+      {glyphSrc ? (
         <img
           src={glyphSrc}
           alt=""
           style={{ width: '24px', height: '24px', objectFit: 'contain', flexShrink: 0, opacity: 0.9 }}
         />
-      )}
+      ) : fallbackText ? (
+        <span style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', flexShrink: 0 }}>
+          {fallbackText}
+        </span>
+      ) : null}
       <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
         {text}
       </span>

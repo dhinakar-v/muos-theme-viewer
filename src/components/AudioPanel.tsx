@@ -16,6 +16,10 @@ export default function AudioPanel() {
   const audioMap = theme?.audio ?? new Map<string, string>();
   const entries = [...audioMap.entries()];
 
+  const accentColor = theme?.scheme?.['grid']?.['CELL_FOCUS_BACKGROUND']
+    ? `#${theme.scheme['grid']['CELL_FOCUS_BACKGROUND']}`
+    : '#6c63ff';
+
   function play(filename: string, url: string) {
     if (audioRef.current) {
       audioRef.current.pause();
@@ -56,8 +60,8 @@ export default function AudioPanel() {
               gap: '8px',
               padding: '6px 8px',
               borderRadius: '6px',
-              background: isPlaying ? 'rgba(108,99,255,0.15)' : 'rgba(0,0,0,0.06)',
-              border: `1px solid ${isPlaying ? 'rgba(108,99,255,0.4)' : 'rgba(0,0,0,0.1)'}`,
+              background: isPlaying ? `${accentColor}26` : 'rgba(0,0,0,0.06)',
+              border: `1px solid ${isPlaying ? `${accentColor}66` : 'rgba(0,0,0,0.1)'}`,
             }}
           >
             <button
@@ -67,7 +71,7 @@ export default function AudioPanel() {
                 height: '26px',
                 borderRadius: '50%',
                 border: 'none',
-                background: isPlaying ? '#6c63ff' : 'rgba(108,99,255,0.5)',
+                background: isPlaying ? accentColor : `${accentColor}80`,
                 color: '#fff',
                 cursor: 'pointer',
                 fontSize: '11px',

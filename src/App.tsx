@@ -64,8 +64,8 @@ function AppInner({
     function updateScale() {
       if (!centerRef.current) return;
       const available = centerRef.current.getBoundingClientRect();
-      const maxW = available.width - 32;
-      const maxH = available.height - 100;
+      const maxW = available.width - 80;
+      const maxH = available.height - 48;
       const scaleW = maxW / DEVICE_WIDTH;
       const scaleH = maxH / DEVICE_HEIGHT;
       setScale(Math.min(1, scaleW, scaleH));
@@ -163,40 +163,46 @@ function AppInner({
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '16px',
-          gap: '12px',
+          padding: '16px 16px 12px',
           overflow: 'hidden',
+          gap: '12px',
         }}
       >
-        {/* View toggle toolbar */}
-        {showViewToggle && (
-          <div style={{ display: 'flex', gap: '6px', alignSelf: 'center' }}>
-            <button style={toggleBtnStyle(viewMode === 'list')} onClick={() => setViewMode('list')}>
-              ☰ List
-            </button>
-            <button style={toggleBtnStyle(viewMode === 'grid')} onClick={() => setViewMode('grid')}>
-              ⊞ Grid
-            </button>
-          </div>
-        )}
-
         <div style={{ width: DEVICE_WIDTH * scale, height: DEVICE_HEIGHT * scale, position: 'relative' }}>
           <DeviceFrame scale={scale}>
             {getScreenComponent(activeScreen)}
           </DeviceFrame>
         </div>
-        <ScreenNav active={activeScreen} onChange={setActiveScreen} />
+
+        {/* Screen navigation — bottom center */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+          <ScreenNav active={activeScreen} onChange={setActiveScreen} />
+          {/* View toggle — only for grid-capable screens */}
+          {showViewToggle && (
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <button style={toggleBtnStyle(viewMode === 'list')} onClick={() => setViewMode('list')}>
+                ☰ List
+              </button>
+              <button style={toggleBtnStyle(viewMode === 'grid')} onClick={() => setViewMode('grid')}>
+                ⊞ Grid
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Right panel */}
       <div
         style={{
-          width: '260px',
+          width: '240px',
           flexShrink: 0,
-          padding: '16px 12px',
+          padding: '12px',
           borderLeft: '1px solid rgba(0,0,0,0.08)',
           overflowY: 'auto',
           background: '#ffffff',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
         }}
       >
         <SchemeInspector />

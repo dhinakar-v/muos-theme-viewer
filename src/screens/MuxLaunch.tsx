@@ -79,6 +79,7 @@ export default function MuxLaunch() {
             gap: '12px',
             padding: '16px',
             zIndex: 2,
+            overflowX: 'hidden',
           }}
         >
           {MENU_ITEMS.map((item, idx) => {
@@ -95,8 +96,8 @@ export default function MuxLaunch() {
                   gap: '8px',
                   borderRadius: '8px',
                   background: isFocused
-                    ? 'var(--mux-list-focus-bg, rgba(108,99,255,0.35))'
-                    : 'rgba(255,255,255,0.06)',
+                    ? 'var(--mux-cell-focus-bg, rgba(108,99,255,0.35))'
+                    : 'var(--mux-cell-default-bg, rgba(255,255,255,0.06))',
                   padding: '8px',
                 }}
               >
@@ -121,6 +122,10 @@ export default function MuxLaunch() {
                   lineHeight: 1.2,
                   opacity: isFocused ? 1 : 0.8,
                   fontWeight: isFocused ? 600 : 400,
+                  overflow: 'hidden',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical' as const,
                 }}>
                   {item.label}
                 </span>

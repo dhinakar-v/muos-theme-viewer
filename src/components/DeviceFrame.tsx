@@ -31,7 +31,7 @@ export default function DeviceFrame({ children, scale = 1 }: DeviceFrameProps) {
     <div
       style={{
         transform: `scale(${scale})`,
-        transformOrigin: 'top left',
+        transformOrigin: 'top center',
         width: DEVICE_WIDTH,
         height: DEVICE_HEIGHT,
         flexShrink: 0,

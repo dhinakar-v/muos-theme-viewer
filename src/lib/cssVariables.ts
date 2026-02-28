@@ -82,6 +82,8 @@ export function schemeToCssVars(scheme: SchemeValues): Record<string, string> {
   v['--mux-grid-location-x'] = num(scheme, 'grid', 'LOCATION_X', '75') + 'px';
   v['--mux-grid-location-y'] = num(scheme, 'grid', 'LOCATION_Y', '70') + 'px';
   v['--mux-grid-bg'] = color(scheme, 'grid', 'BACKGROUND', 'BACKGROUND_ALPHA');
+  v['--mux-cell-focus-bg'] = color(scheme, 'grid', 'CELL_FOCUS_BACKGROUND', 'CELL_FOCUS_BACKGROUND_ALPHA');
+  v['--mux-cell-default-bg'] = color(scheme, 'grid', 'CELL_DEFAULT_BACKGROUND', 'CELL_DEFAULT_BACKGROUND_ALPHA');
 
   // Label (grid item label)
   v['--mux-label-bg'] = color(scheme, 'grid', 'CURRENT_ITEM_LABEL_BACKGROUND', 'CURRENT_ITEM_LABEL_BACKGROUND_ALPHA');

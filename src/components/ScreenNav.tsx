@@ -46,31 +46,34 @@ export default function ScreenNav({ active, onChange, disabled = false }: Screen
           onClick={() => !disabled && onChange(screen.id)}
           disabled={disabled}
           style={{
-            padding: '5px 10px',
-            borderRadius: '4px',
+            padding: '5px 12px',
+            borderRadius: '20px',
             border: 'none',
             cursor: disabled ? 'default' : 'pointer',
             fontSize: '12px',
-            fontWeight: active === screen.id ? 700 : 400,
+            fontWeight: active === screen.id ? 600 : 400,
             background: active === screen.id
               ? '#6c63ff'
-              : 'rgba(255,255,255,0.08)',
+              : 'rgba(0,0,0,0.06)',
             color: disabled
-              ? 'rgba(255,255,255,0.3)'
+              ? '#bbb'
               : active === screen.id
                 ? '#ffffff'
-                : 'rgba(255,255,255,0.7)',
+                : '#444',
             transition: 'all 0.15s ease',
             outline: 'none',
+            whiteSpace: 'nowrap' as const,
           }}
           onMouseOver={(e) => {
             if (!disabled && active !== screen.id) {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.14)';
+              e.currentTarget.style.background = 'rgba(108,99,255,0.12)';
+              e.currentTarget.style.color = '#6c63ff';
             }
           }}
           onMouseOut={(e) => {
             if (!disabled && active !== screen.id) {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
+              e.currentTarget.style.background = 'rgba(0,0,0,0.06)';
+              e.currentTarget.style.color = '#444';
             }
           }}
         >

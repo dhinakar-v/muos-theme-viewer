@@ -51,6 +51,7 @@ export default function MuxApp() {
             gap: '10px',
             padding: '14px',
             overflowY: 'auto',
+            overflowX: 'hidden',
           }}
         >
           {SAMPLE_APPS.map((app, idx) => {
@@ -66,8 +67,8 @@ export default function MuxApp() {
                   gap: '6px',
                   borderRadius: '8px',
                   background: idx === 0
-                    ? 'var(--mux-list-focus-bg, rgba(108,99,255,0.35))'
-                    : 'rgba(255,255,255,0.06)',
+                    ? 'var(--mux-cell-focus-bg, rgba(108,99,255,0.35))'
+                    : 'var(--mux-cell-default-bg, rgba(255,255,255,0.06))',
                   padding: '10px 6px',
                   aspectRatio: '1',
                 }}
@@ -83,6 +84,10 @@ export default function MuxApp() {
                   textAlign: 'center',
                   lineHeight: 1.2,
                   opacity: idx === 0 ? 1 : 0.8,
+                  overflow: 'hidden',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical' as const,
                 }}>
                   {app.label}
                 </span>
@@ -113,6 +118,7 @@ export default function MuxApp() {
                 text={app.label}
                 focused={idx === 0}
                 glyphSrc={glyphUrl}
+                fallbackText={app.emoji}
               />
             );
           })}

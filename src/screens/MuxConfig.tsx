@@ -5,15 +5,15 @@ import Footer from '../components/Footer';
 import ListItem from '../components/ListItem';
 
 const CONFIG_ITEMS = [
-  { id: 'general', label: 'General Settings' },
-  { id: 'theme', label: 'Theme' },
-  { id: 'language', label: 'Language' },
-  { id: 'network', label: 'Network' },
-  { id: 'bluetooth', label: 'Bluetooth' },
-  { id: 'storage', label: 'Storage' },
-  { id: 'audio', label: 'Audio' },
-  { id: 'power', label: 'Power' },
-  { id: 'advanced', label: 'Advanced' },
+  { id: 'general', label: 'General Settings', emoji: '⚙' },
+  { id: 'theme', label: 'Theme', emoji: '🎨' },
+  { id: 'language', label: 'Language', emoji: '🌐' },
+  { id: 'network', label: 'Network', emoji: '🌐' },
+  { id: 'bluetooth', label: 'Bluetooth', emoji: '📡' },
+  { id: 'storage', label: 'Storage', emoji: '💾' },
+  { id: 'audio', label: 'Audio', emoji: '🔊' },
+  { id: 'power', label: 'Power', emoji: '🔋' },
+  { id: 'advanced', label: 'Advanced', emoji: '⚡' },
 ];
 
 export default function MuxConfig() {
@@ -59,6 +59,7 @@ export default function MuxConfig() {
               text={item.label}
               focused={idx === 0}
               glyphSrc={glyphUrl}
+              fallbackText={item.emoji}
             />
           );
         })}

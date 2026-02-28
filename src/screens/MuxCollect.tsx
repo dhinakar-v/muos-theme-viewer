@@ -48,6 +48,7 @@ export default function MuxCollect() {
             gap: '10px',
             padding: '14px',
             overflowY: 'auto',
+            overflowX: 'hidden',
           }}
         >
           {SAMPLE_COLLECTIONS.map((col, idx) => {
@@ -63,8 +64,8 @@ export default function MuxCollect() {
                   gap: '6px',
                   borderRadius: '8px',
                   background: idx === 0
-                    ? 'var(--mux-list-focus-bg, rgba(108,99,255,0.35))'
-                    : 'rgba(255,255,255,0.06)',
+                    ? 'var(--mux-cell-focus-bg, rgba(108,99,255,0.35))'
+                    : 'var(--mux-cell-default-bg, rgba(255,255,255,0.06))',
                   padding: '12px 6px',
                   aspectRatio: '1',
                 }}
@@ -107,6 +108,7 @@ export default function MuxCollect() {
               key={col.name}
               text={col.name}
               focused={idx === 0}
+              fallbackText={col.emoji}
               value={`${col.count}`}
             />
           ))}

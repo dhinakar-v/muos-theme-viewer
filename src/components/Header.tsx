@@ -1,10 +1,20 @@
+import { useState, useEffect } from 'react';
+
 interface HeaderProps {
   title?: string;
 }
 
+function formatTime(d: Date): string {
+  return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
 export default function Header({ title = 'muOS' }: HeaderProps) {
-  const now = new Date();
-  const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  const [time, setTime] = useState(() => formatTime(new Date()));
+
+  useEffect(() => {
+    const id = setInterval(() => setTime(formatTime(new Date())), 60_000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <div

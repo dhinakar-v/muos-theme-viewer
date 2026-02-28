@@ -36,6 +36,16 @@ export default function MuxInfo() {
           overflowY: 'auto',
         }}
       >
+        <div style={{
+          fontSize: '11px',
+          color: 'var(--mux-list-focus-text, #ffffff)',
+          opacity: 0.6,
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+          padding: '4px 12px 8px',
+        }}>
+          System Information
+        </div>
         {INFO_ROWS.map((row) => (
           <div
             key={row.label}
@@ -45,7 +55,7 @@ export default function MuxInfo() {
               alignItems: 'center',
               padding: '6px 12px',
               color: 'var(--mux-list-default-text, #ffffff)',
-              borderBottom: '1px solid rgba(255,255,255,0.05)',
+              borderBottom: '1px solid rgba(255,255,255,0.15)',
             }}
           >
             <span style={{ opacity: 0.7, fontSize: '13px' }}>{row.label}</span>
