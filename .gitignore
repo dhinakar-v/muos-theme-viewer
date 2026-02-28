@@ -29,6 +29,9 @@ data/
 # Serena MCP
 .serena/
 
+# Git worktrees
+.worktrees/
+
 # macOS
 .AppleDouble
 .LSOverride
