@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface ListItemProps {
   text: string;
   focused?: boolean;
@@ -13,33 +15,77 @@ export default function ListItem({ text, focused = false, glyphSrc, fallbackText
       style={{
         display: 'flex',
         alignItems: 'center',
-        padding: '0 var(--mux-list-pad-right, 15px) 0 var(--mux-list-pad-left, 45px)',
-        height: '40px',
-        background: focused ? 'var(--mux-list-focus-bg, rgba(255,255,255,0.1))' : 'var(--mux-list-default-bg, transparent)',
-        color: focused ? 'var(--mux-list-focus-text, #ffffff)' : 'var(--mux-list-default-text, #ffffff)',
-        borderRadius: focused ? '30px' : '0',
-        gap: '10px',
-        fontSize: '14px',
+        height: 40,
+        paddingLeft: 'var(--mux-list-pad-left, 45px)',
+        paddingRight: 'var(--mux-list-pad-right, 15px)',
         ...style,
       }}
     >
-      {glyphSrc ? (
-        <img
-          src={glyphSrc}
-          alt=""
-          style={{ width: '24px', height: '24px', objectFit: 'contain', flexShrink: 0, opacity: 0.9 }}
-        />
-      ) : fallbackText ? (
-        <span style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', flexShrink: 0 }}>
-          {fallbackText}
+      {/* Pill highlight wraps the content row */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          flex: 1,
+          height: '100%',
+          paddingLeft: 10,
+          paddingRight: 10,
+          borderRadius: focused ? 30 : 0,
+          background: focused
+            ? 'var(--mux-list-focus-bg, rgba(255,255,255,0.12))'
+            : 'transparent',
+          color: focused
+            ? 'var(--mux-list-focus-text, #ffffff)'
+            : 'var(--mux-list-default-text, rgba(255,255,255,0.75))',
+          transition: 'background 0.15s',
+          gap: 10,
+        }}
+      >
+        {/* Glyph */}
+        <div
+          style={{
+            width: 24,
+            height: 24,
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {glyphSrc ? (
+            <img
+              src={glyphSrc}
+              alt=""
+              style={{
+                width: 24,
+                height: 24,
+                objectFit: 'contain',
+                filter: 'brightness(0) invert(1)',
+              }}
+            />
+          ) : fallbackText ? (
+            <span style={{ fontSize: 16 }}>{fallbackText}</span>
+          ) : null}
+        </div>
+
+        {/* Text */}
+        <span
+          style={{
+            flex: 1,
+            fontSize: 13,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {text}
         </span>
-      ) : null}
-      <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-        {text}
-      </span>
-      {value && (
-        <span style={{ opacity: 0.7, fontSize: '13px', flexShrink: 0 }}>{value}</span>
-      )}
+
+        {/* Optional right value */}
+        {value && (
+          <span style={{ fontSize: 12, opacity: 0.6, flexShrink: 0 }}>{value}</span>
+        )}
+      </div>
     </div>
   );
 }
